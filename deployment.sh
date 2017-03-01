@@ -17,6 +17,9 @@ TEMP=/tmp
 RELEASE=$ARTEFACT
 APP_DEPLOY=/opt/jboss/jboss-as/server/jenkins_labwork8/deploy/hreben.war/
 
+# Output env variables
+echo "RELEASE=$RELEASE"
+
 # Checking permissions on base directory
 if [[ ! -r $BASE_DIR ]]
 then 
