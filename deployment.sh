@@ -89,8 +89,9 @@ if [ -z "$(curl -sL http://jboss/hreben | grep Sample)" ]
 			rm -f $BASE_DIR/$APP/$CUR/*
 			rm -f $BASE_DIR/$APP/$DIST/*
 			mv $BASE_DIR/$APP/$OLD/$OLD_RELEASE $BASE_DIR/$APP/$CUR
-			tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
+			tar -zxf $BASE_DIR/$APP/$CUR/$OLD_RELEASE -C $BASE_DIR/$APP/$DIST/
 		        sudo cp $BASE_DIR/$APP/$DIST/* $APP_DEPLOY
+			echo "Done!"
 		fi
 	else
 		echo "Congratulations! Application is up and running!"
