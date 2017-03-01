@@ -14,7 +14,7 @@ OLD="old"
 CUR="current"
 DIST="dist"
 TEMP=/tmp
-RELEASE="release-6.tar.gz"
+RELEASE=$ARTEFACT
 APP_DEPLOY=/opt/jboss/jboss-as/server/jenkins_labwork8/deploy/hreben.war/
 
 # Checking permissions on base directory
@@ -77,7 +77,7 @@ echo "Waiting for Jboss..."
 sleep 15s
 
 echo "Performing tests..."
-if [ -z "$(curl -sL http://jboss/hreben | grep Sample)"]
+if [ -z "$(curl -sL http://jboss/hreben | grep Sample)" ]
 	then
 		echo "Something went wrong. Rolling back..."
 		if [ -z "$(ls -A $BASE_DIR/$APP/$OLD/)" ]
