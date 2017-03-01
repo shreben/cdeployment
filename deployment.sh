@@ -60,7 +60,9 @@ then
 		tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
 	else
 		echo "Cleaning directories... "
-		rm -f $BASE_DIR/$APP/$OLD/* && mv $BASE_DIR/$APP/$CUR/* $BASE_DIR/$APP/$OLD && mv $RELEASE $BASE_DIR/$APP/$CUR/
+		# Define old release variable
+		OLD_RELEASE=`ls $BASE_DIR/$APP/$CUR/`
+		rm -f $BASE_DIR/$APP/$OLD/* && mv $BASE_DIR/$APP/$CUR/$OLD_RELEASE $BASE_DIR/$APP/$OLD && mv $RELEASE $BASE_DIR/$APP/$CUR/
 	        rm -f $BASE_DIR/$APP/$DIST/*
         fi
 	echo "Deploying..."
@@ -70,7 +72,29 @@ else
 	echo "Release archive is corrupted. Exiting."
 	exit
 fi
-	
+
+echo "Waiting for Jboss..."
+sleep 15s
+
+echo "Performing tests..."
+if [ -z "$(curl -sL http://jboss/hreben | grep Sample)"]
+	then
+		echo "Something went wrong. Rolling back..."
+		if [ -z "$(ls -A $BASE_DIR/$APP/$OLD/)" ]
+		then
+                	echo "It seems to be an initial release, no backups available!"
+			echo "Review your code!"
+			exit
+		else
+			rm -f $BASE_DIR/$APP/$CUR/*
+			rm -f $BASE_DIR/$APP/$DIST/*
+			mv $BASE_DIR/$APP/$OLD/$OLD_RELEASE $BASE_DIR/$APP/$CUR
+			tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
+		        sudo cp $BASE_DIR/$APP/$DIST/* $APP_DEPLOY
+		fi
+	else
+		echo "Congratulations! Application is up and running!"
+fi
 
  
 
