@@ -51,7 +51,7 @@ wget http://nexus/repository/siarhei-hreben-raw/$RELEASE
 
 # Deploying artefact
 echo "Deploying artefact..."
-if [ tar -tf $RELEASE ]
+if [[ tar -tf $RELEASE > /dev/null 2>&1 ]]
 then
 	rm -f $BASE_DIR/$APP/$OLD/*.tar.gz && mv $BASE_DIR/$APP/$CUR/*.tar.gz $BASE_DIR/$APP/$OLD && mv $RELEASE $BASE_DIR/$APP/$CUR/
 	rm -rf $BASE_DIR/$APP/$DIST/* && tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
