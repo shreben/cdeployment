@@ -14,7 +14,7 @@ OLD="old"
 CUR="current"
 DIST="dist"
 TEMP=/tmp
-RELEASE=$ARTEFACT
+RELEASE="release-6.tar.gz"
 APP_DEPLOY=/opt/jboss/jboss-as/server/jenkins_labwork8/deploy/hreben.war/
 
 # Checking permissions on base directory
@@ -50,12 +50,22 @@ cd $TEMP
 wget http://nexus/repository/siarhei-hreben-raw/$RELEASE
 
 # Deploying artefact
-echo "Deploying artefact..."
-if [[ tar -tf $RELEASE > /dev/null 2>&1 ]]
+echo "Checking artefact consistency..."
+if $(tar tf $RELEASE > /dev/null 2>&1);
 then
-	rm -f $BASE_DIR/$APP/$OLD/*.tar.gz && mv $BASE_DIR/$APP/$CUR/*.tar.gz $BASE_DIR/$APP/$OLD && mv $RELEASE $BASE_DIR/$APP/$CUR/
-	rm -rf $BASE_DIR/$APP/$DIST/* && tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
-	cp $BASE_DIR/$APP/$DIST/* $APP_DEPLOY
+	echo "Preparing artefact for deployment..."
+	if [ -z "$(ls -A $BASE_DIR/$APP/$CUR/)" ]; then
+		echo "Empty $CUR dir, nothing to move."
+		mv $RELEASE $BASE_DIR/$APP/$CUR/
+		tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
+	else
+		echo "Cleaning directories... "
+		rm -f $BASE_DIR/$APP/$OLD/* && mv $BASE_DIR/$APP/$CUR/* $BASE_DIR/$APP/$OLD && mv $RELEASE $BASE_DIR/$APP/$CUR/
+	        rm -f $BASE_DIR/$APP/$DIST/*
+        fi
+	echo "Deploying..."
+	tar -zxf $BASE_DIR/$APP/$CUR/$RELEASE -C $BASE_DIR/$APP/$DIST/
+	sudo cp $BASE_DIR/$APP/$DIST/* $APP_DEPLOY
 else
 	echo "Release archive is corrupted. Exiting."
 	exit
